@@ -10,6 +10,13 @@ class WeekHp < Formula
     strategy :github_latest
   end
 
+  bottle do
+    root_url "https://github.com/cmaldonadowilson/homebrew-tap/releases/download/week-hp-1.0.0"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "86d08474faa7b867ba612a1175685ad478b79fab0d53749ba57de71b9055dd0e"
+    sha256 cellar: :any_skip_relocation, sequoia:       "79643be776f1a76f7ea2888b53514d41018a42726fa1c1f4799ea41bd88a6a8c"
+  end
+
   depends_on macos: :ventura
 
   uses_from_macos "swift" => :build
