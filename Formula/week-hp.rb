@@ -1,8 +1,8 @@
 class WeekHp < Formula
   desc "Retro health bar in the menu bar that fills up from Monday to Friday"
   homepage "https://github.com/cmaldonadowilson/week-hp-macos"
-  url "https://github.com/cmaldonadowilson/week-hp-macos/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 "7071b19bd8802c9898e2cc3e0dd55da2af3d96a2da5565b40ccb8048e833f7d1"
+  url "https://github.com/cmaldonadowilson/week-hp-macos/archive/refs/tags/v1.1.0.tar.gz"
+  sha256 "1d73b8772bbde51abf21e34192c8ab7795c131115a0e19cf1e9cd36e23dbb7ac"
   license "GPL-2.0-or-later"
 
   livecheck do
