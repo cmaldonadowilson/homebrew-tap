@@ -5,6 +5,11 @@ class WeekHp < Formula
   sha256 "7071b19bd8802c9898e2cc3e0dd55da2af3d96a2da5565b40ccb8048e833f7d1"
   license "GPL-2.0-or-later"
 
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   depends_on macos: :ventura
 
   uses_from_macos "swift" => :build
