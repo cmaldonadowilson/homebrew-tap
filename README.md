@@ -23,13 +23,24 @@ brew uninstall week-hp
 brew untap cmaldonadowilson/tap
 ```
 
-## Publishing bottles
+## New versions
 
-1. Open a pull request that changes the formula, e.g. a new `url` and `sha256`.
-   The `brew test-bot` workflow builds the bottles on macOS 15 (Apple Silicon
+New versions arrive on their own:
+
+1. Publishing a release of week-hp-macos runs `brew bump` here (`autobump.yml`),
+   which also runs every day. It opens a pull request with the new `url` and
+   `sha256`.
+2. The `brew test-bot` workflow builds the bottles on macOS 15 (Apple Silicon
    and Intel).
-2. When its checks pass, run the `brew pr-pull` workflow with the pull request
-   number, from the Actions tab or with
-   `gh workflow run publish.yml -f pull_request=<number>`.
-   It uploads the bottles to a release of this repository, adds them to the
-   formula and pushes the result to `main`.
+3. When its checks pass, the `brew pr-pull` workflow (`publish.yml`) uploads
+   the bottles to a release of this repository, adds them to the formula,
+   pushes the result to `main` and deletes the pull request branch.
+
+The pull request is opened with the `HOMEBREW_TAP_TOKEN` secret, a
+fine-grained personal access token for this repository (Actions, Contents and
+Pull requests: read and write). With `GITHUB_TOKEN` its tests would wait for
+an approval. week-hp-macos has the same secret to start `autobump.yml`.
+
+For any other change to a formula, open a pull request by hand. When its
+checks pass, run `gh workflow run publish.yml -f pull_request=<number>` (or
+**brew pr-pull** in the Actions tab) to publish its bottles.

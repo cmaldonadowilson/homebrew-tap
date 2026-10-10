@@ -1,6 +1,7 @@
-# Based on the `brew tap-new` template. Run it by hand once the tests of a
-# pull request pass: it uploads the bottles to a release of this repository,
-# adds them to the formula and pushes the result to main.
+# Based on the `brew tap-new` template. Uploads the bottles of a pull request
+# to a release of this repository, adds them to the formula and pushes the
+# result to main. It runs on its own once the tests of a version bump opened by
+# autobump.yml pass, and can also be run by hand for any other pull request.
 name: brew pr-pull
 
 on:
@@ -11,6 +12,9 @@ on:
         required: true
       head_sha:
         description: Expected pull request head commit SHA (optional)
+  workflow_run:
+    workflows: [brew test-bot]
+    types: [completed]
 
 permissions: {}
 
@@ -20,6 +24,14 @@ defaults:
 
 jobs:
   pr-pull:
+    # On its own only for the bump branches of this repository whose tests
+    # passed, never for pull requests from forks
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.event == 'pull_request' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_repository.full_name == github.repository &&
+       startsWith(github.event.workflow_run.head_branch, 'bump-'))
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -45,9 +57,14 @@ jobs:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_GIT_COMMITTER_NAME: ${{ steps.git_setup.outputs.name }}
           HOMEBREW_GIT_COMMITTER_EMAIL: ${{ steps.git_setup.outputs.email }}
-          HEAD_SHA: ${{ inputs.head_sha }}
-          PULL_REQUEST: ${{ inputs.pull_request }}
+          HEAD_SHA: ${{ inputs.head_sha || github.event.workflow_run.head_sha }}
+          PULL_REQUEST: ${{ inputs.pull_request || github.event.workflow_run.pull_requests[0].number }}
         run: |
+          if [[ -z "$PULL_REQUEST" ]]
+          then
+            echo "::error::No pull request for this run of the tests"
+            exit 1
+          fi
           if [[ -n "$HEAD_SHA" ]]
           then
             brew pr-pull --debug --retain-bottle-dir --tap="$GITHUB_REPOSITORY" --head-sha="$HEAD_SHA" \
@@ -65,3 +82,10 @@ jobs:
         uses: Homebrew/actions/git-try-push@e99025eb970cfa124b8284a35463d87426917478 # 2026.09.28.1
         with:
           branch: main
+
+      - name: Delete the bump branch
+        if: github.event_name == 'workflow_run'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$BRANCH"
