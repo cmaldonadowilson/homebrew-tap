@@ -11,9 +11,9 @@ class WeekHp < Formula
   end
 
   bottle do
-    root_url "https://github.com/cmaldonadowilson/homebrew-tap/releases/download/week-hp-1.1.0"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1a82027d1528bd68d71020ce2ef88871eda4652d531809cefe9eaede86ad330b"
-    sha256 cellar: :any_skip_relocation, sequoia:       "b0cc5dcd59078c308ab4a5ce7831d86a525cdec20ac8de5c40728c03c214a6f6"
+    root_url "https://github.com/cmaldonadowilson/homebrew-tap/releases/download/week-hp-1.2.0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b31fb39977e54f0d3b512961d90a35f29a29f92eaf48aaf2a1803a189c664d24"
+    sha256 cellar: :any_skip_relocation, sequoia:       "491a929ad5c29337d3dc592ec788ef765ba45c1c36c17ec0d20f9377ac2fe4f0"
   end
 
   depends_on macos: :ventura
